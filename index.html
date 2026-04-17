@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Inaugural Lecture | Prof. [Name]</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --deep-purple: #1a0b2e;
+            --royal-purple: #3d1b5d;
+            --vibrant-purple: #7b2cbf;
+            --gold: #ffcf40;
+            --gold-glow: rgba(255, 207, 64, 0.4);
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--deep-purple);
+            color: #f8f9fa;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        h1, h2, h3, .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* --- Animated Mesh Background --- */
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 30%, var(--royal-purple) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, var(--vibrant-purple) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, #240046 0%, transparent 60%);
+            filter: blur(60px);
+            animation: meshMove 20s infinite alternate ease-in-out;
+        }
+
+        @keyframes meshMove {
+            0% { transform: scale(1) translate(0,0); }
+            50% { transform: scale(1.1) translate(1%, 2%); }
+            100% { transform: scale(1) translate(-1%, -1%); }
+        }
+
+        /* --- Animations --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.17, 0.55, 0.55, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Glassmorphism --- */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+        }
+
+        /* --- Timer --- */
+        .timer-val {
+            background: linear-gradient(180deg, #4d1d7a 0%, #240b36 100%);
+            padding: 0.75rem;
+            border-radius: 12px;
+            min-width: 65px;
+            font-size: 1.75rem;
+            font-weight: 800;
+            border: 1px solid var(--gold);
+            box-shadow: 0 0 10px var(--gold-glow);
+            margin-bottom: 0.25rem;
+        }
+        @media (min-width: 768px) {
+            .timer-val { min-width: 85px; font-size: 2.5rem; padding: 1rem; }
+        }
+
+        /* --- Timeline --- */
+        .timeline-container { position: relative; padding-left: 1.5rem; }
+        .timeline-line { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: rgba(255, 255, 255, 0.1); }
+        .timeline-progress { position: absolute; left: 0; top: 0; width: 3px; background: var(--gold); height: 0%; transition: height 0.1s linear; }
+
+        /* --- Gallery --- */
+        .gallery-item { border-radius: 12px; overflow: hidden; position: relative; }
+        .gallery-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(26, 11, 46, 0.9), transparent);
+            display: flex; align-items: flex-end; padding: 1rem;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        @media (hover: none) { .gallery-overlay { opacity: 1; background: linear-gradient(to top, rgba(26, 11, 46, 0.7), transparent); } }
+        .gallery-item:hover .gallery-overlay { opacity: 1; }
+
+        /* --- Message Feed --- */
+        #messages-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .message-card { margin-bottom: 1rem; border-left: 4px solid var(--gold); }
+
+        /* --- Mobile Nav --- */
+        .mobile-menu {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(26, 11, 46, 0.9);
+            backdrop-filter: blur(15px);
+            padding: 0.75rem 1.5rem;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            display: flex; gap: 1.5rem; z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .mobile-menu a { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.6); }
+        .mobile-menu a.active { color: var(--gold); font-weight: bold; }
+
+        .gold-text { color: var(--gold); text-shadow: 0 0 8px var(--gold-glow); }
+        
+        /* Hide Desktop Nav on Mobile */
+        @media (max-width: 767px) {
+            .desktop-nav { display: none; }
+        }
+        @media (min-width: 768px) {
+            .mobile-menu { display: none; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="mesh-bg"></div>
+
+    <!-- Desktop Navigation -->
+    <nav class="desktop-nav fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center bg-transparent transition-all duration-300" id="main-nav">
+        <div class="text-2xl font-bold gold-text serif">FUTA</div>
+        <div class="flex gap-8 text-xs font-semibold tracking-widest uppercase">
+            <a href="#hero" class="hover:text-yellow-400">Home</a>
+            <a href="#about" class="hover:text-yellow-400">Bio</a>
+            <a href="#gallery" class="hover:text-yellow-400">Gallery</a>
+            <a href="#guestbook" class="hover:text-yellow-400">Guestbook</a>
+        </div>
+        <a href="#guestbook" class="bg-yellow-400 text-purple-900 px-6 py-2 rounded-full font-bold text-xs uppercase tracking-tighter">RSVP</a>
+    </nav>
+
+    <!-- Mobile Navigation Bar (App Style) -->
+    <div class="mobile-menu">
+        <a href="#hero" class="active">Home</a>
+        <a href="#about">Bio</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#guestbook">Post</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="min-h-screen flex flex-col justify-center items-center px-6 pt-10 text-center relative">
+        <div class="reveal active">
+            <p class="uppercase tracking-[0.2em] text-yellow-400 mb-3 text-[10px] md:text-sm font-bold">The University Senate Presents</p>
+            <h1 class="text-4xl md:text-8xl mb-4 leading-tight">Inaugural <br><span class="gold-text">Lecture Series</span></h1>
+            <p class="text-lg md:text-2xl max-w-xl mx-auto opacity-80 serif italic px-4">"Navigating the Frontiers of [Department Name]: Innovations for a Sustainable Future"</p>
+        </div>
+
+        <!-- Countdown Timer -->
+        <div class="mt-10 flex gap-3 md:gap-6 reveal active" style="transition-delay: 0.1s;">
+            <div class="timer-unit">
+                <div class="timer-val" id="days">00</div>
+                <span class="text-[10px] uppercase tracking-widest opacity-60">Days</span>
+            </div>
+            <div class="timer-unit">
+                <div class="timer-val" id="hours">00</div>
+                <span class="text-[10px] uppercase tracking-widest opacity-60">Hrs</span>
+            </div>
+            <div class="timer-unit">
+                <div class="timer-val" id="minutes">00</div>
+                <span class="text-[10px] uppercase tracking-widest opacity-60">Mins</span>
+            </div>
+            <div class="timer-unit">
+                <div class="timer-val" id="seconds">00</div>
+                <span class="text-[10px] uppercase tracking-widest opacity-60">Secs</span>
+            </div>
+        </div>
+
+        <div class="mt-12 reveal active" style="transition-delay: 0.2s;">
+            <p class="text-sm md:text-lg font-bold tracking-widest uppercase">JUNE 26, 2026 • 10:00 AM</p>
+            <p class="text-xs opacity-60 mt-1">Obafemi Awolowo Auditorium, FUTA</p>
+            <div class="mt-8 md:hidden">
+                <a href="#guestbook" class="inline-block bg-yellow-400 text-purple-900 px-10 py-4 rounded-full font-black text-sm uppercase shadow-xl">RSVP & Congratulate</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 px-6 max-w-5xl mx-auto overflow-hidden">
+        <div class="grid md:grid-cols-2 gap-10 items-center">
+            <div class="relative reveal px-4">
+                <div class="absolute -inset-2 border border-yellow-500/30 rounded-2xl transform rotate-2"></div>
+                <div class="aspect-[4/5] bg-neutral-800 rounded-xl overflow-hidden glass-card relative z-10 shadow-2xl">
+                    <img id="professor-img" src="https://via.placeholder.com/600x800/2e0249/ffd700?text=Professor+Portrait" alt="Professor" class="w-full h-full object-cover">
+                </div>
+            </div>
+            <div class="reveal mt-6 md:mt-0">
+                <h2 class="text-3xl md:text-4xl mb-6 gold-text">Academic Journey</h2>
+                <div class="timeline-container">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-progress" id="timeline-progress"></div>
+                    
+                    <div class="mb-8 relative">
+                        <div class="w-3 h-3 bg-yellow-400 rounded-full absolute -left-[1.6rem] top-1 shadow-[0_0_8px_var(--gold)]"></div>
+                        <h3 class="text-lg font-bold">1998 - First Steps</h3>
+                        <p class="text-sm opacity-70 mt-1">Joined the academia as a Graduate Assistant, beginning a lifelong commitment to FUTA.</p>
+                    </div>
+                    <div class="mb-8 relative">
+                        <div class="w-3 h-3 bg-yellow-400 rounded-full absolute -left-[1.6rem] top-1 shadow-[0_0_8px_var(--gold)]"></div>
+                        <h3 class="text-lg font-bold">2010 - Doctoral Milestone</h3>
+                        <p class="text-sm opacity-70 mt-1">Awarded PhD, contributing pioneering research to the global scientific community.</p>
+                    </div>
+                    <div class="relative">
+                        <div class="w-3 h-3 bg-yellow-400 rounded-full absolute -left-[1.6rem] top-1 shadow-[0_0_8px_var(--gold)]"></div>
+                        <h3 class="text-lg font-bold">2026 - Professorship</h3>
+                        <p class="text-sm opacity-70 mt-1">Reaching the pinnacle of his career as an Inaugural Lecturer at the Great FUTA.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-20 px-4 bg-[#00000011]">
+        <div class="text-center mb-10 reveal">
+            <h2 class="text-3xl md:text-4xl mb-2 gold-text">Photo Highlights</h2>
+            <p class="text-xs opacity-50 uppercase tracking-widest">A legacy in pictures</p>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 reveal">
+            <div class="gallery-item aspect-square glass-card" onclick="openLightbox(this)">
+                <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
+                <div class="gallery-overlay">
+                    <p class="text-[10px] font-bold text-yellow-400 uppercase">Field Research</p>
+                </div>
+            </div>
+            <div class="gallery-item aspect-square glass-card" onclick="openLightbox(this)">
+                <img src="https://images.unsplash.com/photo-1541339907198-e08756edd811?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
+                <div class="gallery-overlay">
+                    <p class="text-[10px] font-bold text-yellow-400 uppercase">FUTA Campus</p>
+                </div>
+            </div>
+            <div class="gallery-item aspect-square glass-card col-span-2 md:col-span-1" onclick="openLightbox(this)">
+                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
+                <div class="gallery-overlay">
+                    <p class="text-[10px] font-bold text-yellow-400 uppercase">Global Stage</p>
+                </div>
+            </div>
+            <div class="gallery-item aspect-square glass-card" onclick="openLightbox(this)">
+                <img src="https://images.unsplash.com/photo-1491843351663-8c39ed49754d?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
+                <div class="gallery-overlay">
+                    <p class="text-[10px] font-bold text-yellow-400 uppercase">Moments</p>
+                </div>
+            </div>
+            <div class="gallery-item aspect-square glass-card" onclick="openLightbox(this)">
+                <img src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
+                <div class="gallery-overlay">
+                    <p class="text-[10px] font-bold text-yellow-400 uppercase">Excellence</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guestbook Section -->
+    <section id="guestbook" class="py-20 px-6 max-w-5xl mx-auto mb-20">
+        <div class="grid lg:grid-cols-2 gap-10">
+            <!-- Form -->
+            <div class="reveal">
+                <h2 class="text-3xl mb-4 gold-text">Sign the Wall</h2>
+                <form id="message-form" class="glass-card p-6 flex flex-col gap-4">
+                    <input type="text" id="guest-name" placeholder="Your Name" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl text-sm focus:border-yellow-400 focus:outline-none transition" required>
+                    <textarea id="guest-message" rows="3" placeholder="Congratulations message..." class="w-full bg-white/5 border border-white/10 p-4 rounded-xl text-sm focus:border-yellow-400 focus:outline-none transition" required></textarea>
+                    <button type="submit" class="bg-yellow-400 text-purple-900 py-4 rounded-xl font-bold uppercase text-xs tracking-widest shadow-lg active:scale-95 transition">Post Message</button>
+                </form>
+                <div id="success-msg" class="hidden mt-4 p-4 glass-card text-center text-green-400 text-sm font-bold">
+                    Message posted live! 🎉
+                </div>
+            </div>
+
+            <!-- Feed -->
+            <div class="reveal">
+                <h2 class="text-2xl mb-4 opacity-80 serif italic">Congratulatory Feed</h2>
+                <div id="messages-container" class="space-y-4">
+                    <!-- Sample Messages -->
+                    <div class="glass-card p-5 message-card">
+                        <p class="text-sm italic opacity-90">"A milestone of excellence! Congratulations Professor on this well-deserved honour."</p>
+                        <div class="mt-3 flex justify-between items-end">
+                            <span class="text-xs font-bold text-yellow-400">— Prof. Adeniyi</span>
+                            <span class="text-[8px] opacity-40 uppercase">Just Now</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="fixed inset-0 bg-black/95 z-[200] hidden items-center justify-center p-4" onclick="this.classList.add('hidden')">
+        <img id="lightbox-img" src="" class="max-w-full max-h-[80vh] rounded-lg shadow-2xl">
+        <button class="absolute top-6 right-6 text-white text-3xl">&times;</button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-12 text-center opacity-30 text-[10px] tracking-widest uppercase border-t border-white/5 pb-24 md:pb-12">
+        <p>&copy; 2026 Professor [Dad's Name] • FUTA Inaugural Series</p>
+    </footer>
+
+    <script>
+        // --- Countdown ---
+        const targetDate = new Date("June 26, 2026 10:00:00").getTime();
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const gap = targetDate - now;
+            const second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24;
+            document.getElementById('days').innerText = Math.floor(gap / day).toString().padStart(2, '0');
+            document.getElementById('hours').innerText = Math.floor((gap % day) / hour).toString().padStart(2, '0');
+            document.getElementById('minutes').innerText = Math.floor((gap % hour) / minute).toString().padStart(2, '0');
+            document.getElementById('seconds').innerText = Math.floor((gap % minute) / second).toString().padStart(2, '0');
+        }
+        setInterval(updateCountdown, 1000); updateCountdown();
+
+        // --- Gallery Lightbox ---
+        function openLightbox(el) {
+            const lb = document.getElementById('lightbox');
+            document.getElementById('lightbox-img').src = el.querySelector('img').src;
+            lb.classList.remove('hidden'); lb.classList.add('flex');
+        }
+
+        // --- Scroll Reveal ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    // Active Nav Link Update
+                    if (window.innerWidth < 768) {
+                        const id = entry.target.getAttribute('id');
+                        document.querySelectorAll('.mobile-menu a').forEach(a => {
+                            a.classList.toggle('active', a.getAttribute('href') === `#${id}`);
+                        });
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('section').forEach(sec => observer.observe(sec));
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // --- Timeline & Nav Scroll Effect ---
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('main-nav');
+            window.scrollY > 20 ? nav.classList.add('bg-purple-950/90', 'backdrop-blur-md', 'py-4') : nav.classList.remove('bg-purple-950/90', 'backdrop-blur-md', 'py-4');
+
+            const about = document.getElementById('about');
+            const progress = document.getElementById('timeline-progress');
+            const rect = about.getBoundingClientRect();
+            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                let p = (window.innerHeight - rect.top) / (rect.height + window.innerHeight) * 150;
+                progress.style.height = Math.min(Math.max(p, 0), 100) + '%';
+            }
+        });
+
+        // --- Message Posting ---
+        document.getElementById('message-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('guest-name').value;
+            const msg = document.getElementById('guest-message').value;
+            
+            const card = document.createElement('div');
+            card.className = "glass-card p-5 message-card animate-pulse";
+            card.innerHTML = `
+                <p class="text-sm italic opacity-90">"${msg}"</p>
+                <div class="mt-3 flex justify-between items-end">
+                    <span class="text-xs font-bold text-yellow-400">— ${name}</span>
+                    <span class="text-[8px] opacity-40 uppercase">Just Now</span>
+                </div>
+            `;
+            const container = document.getElementById('messages-container');
+            container.insertBefore(card, container.firstChild);
+            
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.8 }, colors: ['#ffcf40', '#7b2cbf'] });
+            this.reset();
+            const success = document.getElementById('success-msg');
+            success.classList.remove('hidden');
+            setTimeout(() => { success.classList.add('hidden'); card.classList.remove('animate-pulse'); }, 3000);
+        });
+    </script>
+</body>
+</html>
