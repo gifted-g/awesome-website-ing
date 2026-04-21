@@ -1,406 +1,468 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Inaugural Lecture | Prof. [Name]</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            base: '#0a0d12', // Deep Carbon
+                            surface: '#161b22',
+                            accent: '#00f5d4', // Precision Cyan
+                            gold: '#d4af37',  // Value/Prestige Gold
+                            emerald: '#10b981'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Fraunces"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         :root {
-            --deep-purple: #1a0b2e;
-            --royal-purple: #3d1b5d;
-            --vibrant-purple: #7b2cbf;
-            --gold: #ffcf40;
-            --gold-glow: rgba(255, 207, 64, 0.4);
-            --glass: rgba(255, 255, 255, 0.05);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            scroll-behavior: smooth;
-            -webkit-tap-highlight-color: transparent;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(22, 27, 34, 0.7);
         }
 
         body {
-            background-color: var(--deep-purple);
-            color: #f8f9fa;
-            font-family: 'Inter', sans-serif;
+            background-color: #0a0d12;
+            color: #e2e8f0;
             overflow-x: hidden;
-            width: 100%;
         }
 
-        h1, h2, h3, .serif {
-            font-family: 'Playfair Display', serif;
-        }
-
-        /* --- Animated Mesh Background --- */
-        .mesh-bg {
+        /* Video Background Container */
+        .video-background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .video-background video {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: saturate(0.5) brightness(0.4); /* Architectural moodiness */
+        }
+
+        /* The 'Senior Dev' Scrim - ensures text contrast regardless of video content */
+        .video-overlay {
+            position: fixed;
+            inset: 0;
             z-index: -1;
-            background: 
-                radial-gradient(circle at 20% 30%, var(--royal-purple) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, var(--vibrant-purple) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, #240046 0%, transparent 60%);
-            filter: blur(60px);
-            animation: meshMove 20s infinite alternate ease-in-out;
+            background: radial-gradient(circle at center, transparent 0%, #0a0d12 100%),
+                        linear-gradient(to bottom, rgba(10, 13, 18, 0.5), #0a0d12);
+            backdrop-filter: blur(2px);
         }
 
-        @keyframes meshMove {
-            0% { transform: scale(1) translate(0,0); }
-            50% { transform: scale(1.1) translate(1%, 2%); }
-            100% { transform: scale(1) translate(-1%, -1%); }
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 50;
         }
 
-        /* --- Animations --- */
-        .reveal {
+        .bento-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .bento-card:hover {
+            border-color: rgba(0, 245, 212, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Architectural Grid Background */
+        .blueprint-grid {
+            background-image: 
+                linear-gradient(rgba(0, 245, 212, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 245, 212, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Animated Progress Beam */
+        .progress-beam {
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, #00f5d4, transparent);
+            box-shadow: 0 0 15px #00f5d4;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0d12; }
+        ::-webkit-scrollbar-thumb { background: #161b22; border-radius: 10px; border: 1px solid var(--glass-border); }
+
+        .reveal-node {
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s cubic-bezier(0.17, 0.55, 0.55, 1);
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .reveal.active {
+        .reveal-node.active {
             opacity: 1;
             transform: translateY(0);
         }
 
-        /* --- Glassmorphism --- */
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-        }
-
-        /* --- Timer --- */
-        .timer-val {
-            background: linear-gradient(180deg, #4d1d7a 0%, #240b36 100%);
-            padding: 0.75rem;
-            border-radius: 12px;
-            min-width: 65px;
-            font-size: 1.75rem;
-            font-weight: 800;
-            border: 1px solid var(--gold);
-            box-shadow: 0 0 10px var(--gold-glow);
-            margin-bottom: 0.25rem;
-        }
-        @media (min-width: 768px) {
-            .timer-val { min-width: 85px; font-size: 2.5rem; padding: 1rem; }
-        }
-
-        /* --- Timeline --- */
-        .timeline-container { position: relative; padding-left: 1.5rem; }
-        .timeline-line { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: rgba(255, 255, 255, 0.1); }
-        .timeline-progress { position: absolute; left: 0; top: 0; width: 3px; background: var(--gold); height: 0%; transition: height 0.1s linear; }
-
-        /* --- Gallery --- */
-        .gallery-item { border-radius: 12px; overflow: hidden; position: relative; }
-        .gallery-overlay {
-            position: absolute; inset: 0;
-            background: linear-gradient(to top, rgba(26, 11, 46, 0.9), transparent);
-            display: flex; align-items: flex-end; padding: 1rem;
-            opacity: 0; transition: opacity 0.3s;
-        }
-        @media (hover: none) { .gallery-overlay { opacity: 1; background: linear-gradient(to top, rgba(26, 11, 46, 0.7), transparent); } }
-        .gallery-item:hover .gallery-overlay { opacity: 1; }
-
-        /* --- Message Feed --- */
-        #messages-container {
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-        .message-card { margin-bottom: 1rem; border-left: 4px solid var(--gold); }
-
-        /* --- Mobile Nav --- */
-        .mobile-menu {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(26, 11, 46, 0.9);
-            backdrop-filter: blur(15px);
-            padding: 0.75rem 1.5rem;
-            border-radius: 40px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            display: flex; gap: 1.5rem; z-index: 100;
+        /* Mobile Bottom Nav Bar */
+        .app-nav {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 13, 18, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 12px 24px;
+            border-radius: 99px;
+            z-index: 100;
+            display: flex;
+            gap: 24px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .mobile-menu a { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.6); }
-        .mobile-menu a.active { color: var(--gold); font-weight: bold; }
-
-        .gold-text { color: var(--gold); text-shadow: 0 0 8px var(--gold-glow); }
-        
-        /* Hide Desktop Nav on Mobile */
-        @media (max-width: 767px) {
-            .desktop-nav { display: none; }
-        }
-        @media (min-width: 768px) {
-            .mobile-menu { display: none; }
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-brand-accent selection:text-brand-base">
 
-    <div class="mesh-bg"></div>
+    <div class="video-background">
+        <!-- Replace with actual MP4 file of architectural building renders/motion -->
+        <video autoplay muted loop playsinline poster="https://placehold.co/1920x1080/0a0d12/00f5d4?text=Loading+Architecture...">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-modern-architecture-buildings-with-glass-facades-4453-large.mp4" type="video/mp4">
+        </video>
+    </div>
+    <div class="video-overlay"></div>
 
-    <!-- Desktop Navigation -->
-    <nav class="desktop-nav fixed top-0 w-full z-50 px-8 py-6 flex justify-between items-center bg-transparent transition-all duration-300" id="main-nav">
-        <div class="text-2xl font-bold gold-text serif">FUTA</div>
-        <div class="flex gap-8 text-xs font-semibold tracking-widest uppercase">
-            <a href="#hero" class="hover:text-yellow-400">Home</a>
-            <a href="#about" class="hover:text-yellow-400">Bio</a>
-            <a href="#gallery" class="hover:text-yellow-400">Gallery</a>
-            <a href="#guestbook" class="hover:text-yellow-400">Guestbook</a>
-        </div>
-        <a href="#guestbook" class="bg-yellow-400 text-purple-900 px-6 py-2 rounded-full font-bold text-xs uppercase tracking-tighter">RSVP</a>
+    <div class="noise-overlay"></div>
+    <canvas id="blueprintCanvas" class="fixed inset-0 pointer-events-none opacity-40 z-0"></canvas>
+
+    <!-- App Navigation -->
+    <nav class="app-nav">
+        <a href="#hero" class="text-brand-accent transition-transform active:scale-90">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+        <a href="#bio" class="text-white/60 hover:text-white transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+        <a href="#gallery" class="text-white/60 hover:text-white transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+        </a>
+        <a href="#guestbook" class="text-white/60 hover:text-white transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </a>
     </nav>
 
-    <!-- Mobile Navigation Bar (App Style) -->
-    <div class="mobile-menu">
-        <a href="#hero" class="active">Home</a>
-        <a href="#about">Bio</a>
-        <a href="#gallery">Gallery</a>
-        <a href="#guestbook">Post</a>
-    </div>
-
-    <!-- Hero Section -->
-    <section id="hero" class="min-h-screen flex flex-col justify-center items-center px-6 pt-10 text-center relative">
-        <div class="reveal active">
-            <p class="uppercase tracking-[0.2em] text-yellow-400 mb-3 text-[10px] md:text-sm font-bold">The University Senate Presents</p>
-            <h1 class="text-4xl md:text-8xl mb-4 leading-tight">Inaugural <br><span class="gold-text">Lecture Series</span></h1>
-            <p class="text-lg md:text-2xl max-w-xl mx-auto opacity-80 serif italic px-4">"Navigating the Frontiers of [Department Name]: Innovations for a Sustainable Future"</p>
-        </div>
-
-        <!-- Countdown Timer -->
-        <div class="mt-10 flex gap-3 md:gap-6 reveal active" style="transition-delay: 0.1s;">
-            <div class="timer-unit">
-                <div class="timer-val" id="days">00</div>
-                <span class="text-[10px] uppercase tracking-widest opacity-60">Days</span>
-            </div>
-            <div class="timer-unit">
-                <div class="timer-val" id="hours">00</div>
-                <span class="text-[10px] uppercase tracking-widest opacity-60">Hrs</span>
-            </div>
-            <div class="timer-unit">
-                <div class="timer-val" id="minutes">00</div>
-                <span class="text-[10px] uppercase tracking-widest opacity-60">Mins</span>
-            </div>
-            <div class="timer-unit">
-                <div class="timer-val" id="seconds">00</div>
-                <span class="text-[10px] uppercase tracking-widest opacity-60">Secs</span>
-            </div>
-        </div>
-
-        <div class="mt-12 reveal active" style="transition-delay: 0.2s;">
-            <p class="text-sm md:text-lg font-bold tracking-widest uppercase">JUNE 26, 2026 • 10:00 AM</p>
-            <p class="text-xs opacity-60 mt-1">Obafemi Awolowo Auditorium, FUTA</p>
-            <div class="mt-8 md:hidden">
-                <a href="#guestbook" class="inline-block bg-yellow-400 text-purple-900 px-10 py-4 rounded-full font-black text-sm uppercase shadow-xl">RSVP & Congratulate</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-20 px-6 max-w-5xl mx-auto overflow-hidden">
-        <div class="grid md:grid-cols-2 gap-10 items-center">
-            <div class="relative reveal px-4">
-                <div class="absolute -inset-2 border border-yellow-500/30 rounded-2xl transform rotate-2"></div>
-                <div class="aspect-[4/5] bg-neutral-800 rounded-xl overflow-hidden glass-card relative z-10 shadow-2xl">
-                    <img id="professor-img" src="https://via.placeholder.com/600x800/2e0249/ffd700?text=Professor+Portrait" alt="Professor" class="w-full h-full object-cover">
-                </div>
-            </div>
-            <div class="reveal mt-6 md:mt-0">
-                <h2 class="text-3xl md:text-4xl mb-6 gold-text">Academic Journey</h2>
-                <div class="timeline-container">
-                    <div class="timeline-line"></div>
-                    <div class="timeline-progress" id="timeline-progress"></div>
-                    
-                    <div class="mb-8 relative">
-                        <div class="w-3 h-3 bg-yellow-400 rounded-full absolute -left-[1.6rem] top-1 shadow-[0_0_8px_var(--gold)]"></div>
-                        <h3 class="text-lg font-bold">1998 - First Steps</h3>
-                        <p class="text-sm opacity-70 mt-1">Joined the academia as a Graduate Assistant, beginning a lifelong commitment to FUTA.</p>
+    <main class="relative z-10 blueprint-grid">
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-[100svh] flex flex-col justify-center items-center px-6 text-center pt-20 relative">
+            <div class="reveal-node active z-20">
+                <span class="inline-block py-1 px-3 rounded-full border border-brand-accent/30 text-brand-accent text-[10px] font-bold uppercase tracking-[0.3em] mb-6">
+                    FUTA Inaugural Lecture Series
+                </span>
+                <h1 class="text-5xl md:text-8xl font-serif font-black leading-tight mb-6">
+                    The <span class="italic text-brand-gold">Architecture</span> of <br> 
+                    <span class="text-gradient">Sustainable Value</span>
+                </h1>
+                <p class="text-white/60 text-lg md:text-xl max-w-2xl mx-auto font-light leading-relaxed mb-10">
+                    Navigating the Nexus of Construction Economics and Technological Innovation in a Rapidly Evolving Global Landscape.
+                </p>
+                
+                <!-- Countdown -->
+                <div class="flex gap-4 md:gap-8 justify-center mb-12" id="countdown">
+                    <div class="text-center">
+                        <div class="text-3xl md:text-5xl font-bold text-brand-accent" id="days">00</div>
+                        <div class="text-[9px] uppercase tracking-widest text-white/40 mt-2">Days</div>
                     </div>
-                    <div class="mb-8 relative">
-                        <div class="w-3 h-3 bg-yellow-400 rounded-full absolute -left-[1.6rem] top-1 shadow-[0_0_8px_var(--gold)]"></div>
-                        <h3 class="text-lg font-bold">2010 - Doctoral Milestone</h3>
-                        <p class="text-sm opacity-70 mt-1">Awarded PhD, contributing pioneering research to the global scientific community.</p>
+                    <div class="text-center">
+                        <div class="text-3xl md:text-5xl font-bold text-white/80" id="hours">00</div>
+                        <div class="text-[9px] uppercase tracking-widest text-white/40 mt-2">Hours</div>
                     </div>
-                    <div class="relative">
-                        <div class="w-3 h-3 bg-yellow-400 rounded-full absolute -left-[1.6rem] top-1 shadow-[0_0_8px_var(--gold)]"></div>
-                        <h3 class="text-lg font-bold">2026 - Professorship</h3>
-                        <p class="text-sm opacity-70 mt-1">Reaching the pinnacle of his career as an Inaugural Lecturer at the Great FUTA.</p>
+                    <div class="text-center">
+                        <div class="text-3xl md:text-5xl font-bold text-white/80" id="minutes">00</div>
+                        <div class="text-[9px] uppercase tracking-widest text-white/40 mt-2">Mins</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl md:text-5xl font-bold text-white/80" id="seconds">00</div>
+                        <div class="text-[9px] uppercase tracking-widest text-white/40 mt-2">Secs</div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Gallery Section -->
-    <section id="gallery" class="py-20 px-4 bg-[#00000011]">
-        <div class="text-center mb-10 reveal">
-            <h2 class="text-3xl md:text-4xl mb-2 gold-text">Photo Highlights</h2>
-            <p class="text-xs opacity-50 uppercase tracking-widest">A legacy in pictures</p>
-        </div>
-        
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 reveal">
-            <div class="gallery-item aspect-square glass-card" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
-                <div class="gallery-overlay">
-                    <p class="text-[10px] font-bold text-yellow-400 uppercase">Field Research</p>
-                </div>
+                <a href="#guestbook" class="inline-flex items-center gap-2 bg-brand-accent text-brand-base font-bold py-4 px-10 rounded-full hover:bg-white transition-colors duration-300 shadow-[0_0_20px_rgba(0,245,212,0.3)] group">
+                    POST CONGRATULATIONS
+                    <svg class="group-hover:translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </a>
             </div>
-            <div class="gallery-item aspect-square glass-card" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1541339907198-e08756edd811?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
-                <div class="gallery-overlay">
-                    <p class="text-[10px] font-bold text-yellow-400 uppercase">FUTA Campus</p>
-                </div>
-            </div>
-            <div class="gallery-item aspect-square glass-card col-span-2 md:col-span-1" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover">
-                <div class="gallery-overlay">
-                    <p class="text-[10px] font-bold text-yellow-400 uppercase">Global Stage</p>
-                </div>
-            </div>
-            <div class="gallery-item aspect-square glass-card" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1491843351663-8c39ed49754d?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
-                <div class="gallery-overlay">
-                    <p class="text-[10px] font-bold text-yellow-400 uppercase">Moments</p>
-                </div>
-            </div>
-            <div class="gallery-item aspect-square glass-card" onclick="openLightbox(this)">
-                <img src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&q=80&w=600" class="w-full h-full object-cover">
-                <div class="gallery-overlay">
-                    <p class="text-[10px] font-bold text-yellow-400 uppercase">Excellence</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Guestbook Section -->
-    <section id="guestbook" class="py-20 px-6 max-w-5xl mx-auto mb-20">
-        <div class="grid lg:grid-cols-2 gap-10">
-            <!-- Form -->
-            <div class="reveal">
-                <h2 class="text-3xl mb-4 gold-text">Sign the Wall</h2>
-                <form id="message-form" class="glass-card p-6 flex flex-col gap-4">
-                    <input type="text" id="guest-name" placeholder="Your Name" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl text-sm focus:border-yellow-400 focus:outline-none transition" required>
-                    <textarea id="guest-message" rows="3" placeholder="Congratulations message..." class="w-full bg-white/5 border border-white/10 p-4 rounded-xl text-sm focus:border-yellow-400 focus:outline-none transition" required></textarea>
-                    <button type="submit" class="bg-yellow-400 text-purple-900 py-4 rounded-xl font-bold uppercase text-xs tracking-widest shadow-lg active:scale-95 transition">Post Message</button>
-                </form>
-                <div id="success-msg" class="hidden mt-4 p-4 glass-card text-center text-green-400 text-sm font-bold">
-                    Message posted live! 🎉
+        <!-- Bio Section -->
+        <section id="bio" class="py-24 px-6 max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-12 gap-6">
+                <!-- Profile Card -->
+                <div class="md:col-span-4 bento-card p-8 flex flex-col items-center text-center reveal-node">
+                    <div class="w-48 h-48 rounded-full border-2 border-brand-accent/20 p-2 mb-6">
+                        <div class="w-full h-full rounded-full bg-brand-surface overflow-hidden">
+                            <img src="https://placehold.co/400x400/161b22/00f5d4?text=Prof+Portrait" alt="Professor" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-2">Prof. [Father's Name]</h2>
+                    <p class="text-brand-accent text-sm font-semibold mb-4 italic">B.Sc, M.Sc, PhD, FNIQS</p>
+                    <p class="text-white/50 text-sm leading-relaxed">
+                        Professor of Quantity Surveying with over 25 years of contributing to construction cost management and academic excellence.
+                    </p>
                 </div>
-            </div>
 
-            <!-- Feed -->
-            <div class="reveal">
-                <h2 class="text-2xl mb-4 opacity-80 serif italic">Congratulatory Feed</h2>
-                <div id="messages-container" class="space-y-4">
-                    <!-- Sample Messages -->
-                    <div class="glass-card p-5 message-card">
-                        <p class="text-sm italic opacity-90">"A milestone of excellence! Congratulations Professor on this well-deserved honour."</p>
-                        <div class="mt-3 flex justify-between items-end">
-                            <span class="text-xs font-bold text-yellow-400">— Prof. Adeniyi</span>
-                            <span class="text-[8px] opacity-40 uppercase">Just Now</span>
+                <!-- Academic Journey Bento -->
+                <div class="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="bento-card p-8 reveal-node">
+                        <div class="bg-brand-emerald/10 text-brand-emerald w-10 h-10 rounded-xl flex items-center justify-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Research Prowess</h3>
+                        <p class="text-white/40 text-xs">Pioneering models in construction risk assessment and lifecycle costing within the Nigerian architectural sector.</p>
+                    </div>
+                    <div class="bento-card p-8 reveal-node">
+                        <div class="bg-brand-gold/10 text-brand-gold w-10 h-10 rounded-xl flex items-center justify-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Industry Leadership</h3>
+                        <p class="text-white/40 text-xs">A Fellow of the Nigerian Institute of Quantity Surveyors (FNIQS), bridging the gap between theory and industry.</p>
+                    </div>
+                    <div class="bento-card p-8 sm:col-span-2 reveal-node">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-brand-accent"></span>
+                            Building a Legacy: The Timeline
+                        </h3>
+                        <div class="relative pl-6 space-y-6">
+                            <div class="absolute left-0 top-0 bottom-0 w-[1px] bg-white/10"></div>
+                            <div class="relative">
+                                <div class="absolute -left-[27px] top-1 w-2 h-2 rounded-full bg-brand-accent"></div>
+                                <p class="text-[10px] text-brand-accent font-bold uppercase mb-1">2018 - Present</p>
+                                <p class="text-sm font-semibold">Professor of Quantity Surveying, FUTA</p>
+                            </div>
+                            <div class="relative">
+                                <div class="absolute -left-[27px] top-1 w-2 h-2 rounded-full bg-white/20"></div>
+                                <p class="text-[10px] text-white/30 font-bold uppercase mb-1">2012 - 2018</p>
+                                <p class="text-sm font-semibold">Associate Professor & Dean of Faculty</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Lightbox -->
-    <div id="lightbox" class="fixed inset-0 bg-black/95 z-[200] hidden items-center justify-center p-4" onclick="this.classList.add('hidden')">
-        <img id="lightbox-img" src="" class="max-w-full max-h-[80vh] rounded-lg shadow-2xl">
-        <button class="absolute top-6 right-6 text-white text-3xl">&times;</button>
-    </div>
+        <!-- Gallery Section -->
+        <section id="gallery" class="py-24 px-6 max-w-7xl mx-auto">
+            <h2 class="text-3xl font-serif mb-12 text-center md:text-left"><span class="italic text-brand-gold">The Portfolio</span> — Captured Moments</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bento-card aspect-square overflow-hidden reveal-node">
+                    <img src="https://placehold.co/600x600/161b22/d4af37?text=University+Senate" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
+                </div>
+                <div class="bento-card aspect-[3/4] md:row-span-2 overflow-hidden reveal-node">
+                    <img src="https://placehold.co/600x800/161b22/00f5d4?text=Research+Site" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
+                </div>
+                <div class="bento-card aspect-square overflow-hidden reveal-node">
+                    <img src="https://placehold.co/600x600/161b22/10b981?text=Graduation" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
+                </div>
+                <div class="bento-card aspect-video md:col-span-2 overflow-hidden reveal-node">
+                    <img src="https://placehold.co/1200x600/161b22/ffffff?text=FUTA+Campus+Life" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
+                </div>
+                <div class="bento-card aspect-square overflow-hidden reveal-node">
+                    <img src="https://placehold.co/600x600/161b22/d4af37?text=Family" class="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="Gallery">
+                </div>
+            </div>
+        </section>
 
-    <!-- Footer -->
-    <footer class="py-12 text-center opacity-30 text-[10px] tracking-widest uppercase border-t border-white/5 pb-24 md:pb-12">
-        <p>&copy; 2026 Professor [Dad's Name] • FUTA Inaugural Series</p>
+        <!-- Guestbook Section -->
+        <section id="guestbook" class="py-24 px-6 max-w-7xl mx-auto mb-32">
+            <div class="grid lg:grid-cols-2 gap-12 items-start">
+                <div class="reveal-node">
+                    <h2 class="text-4xl font-serif mb-4"><span class="italic text-brand-emerald">Sign the Foundation</span></h2>
+                    <p class="text-white/40 mb-8 max-w-md">Leave a brick in the wall of congratulations for Professor [Name]'s milestone.</p>
+                    <form id="guestbookForm" class="space-y-4">
+                        <input type="text" id="guestName" placeholder="Full Name" class="w-full bg-brand-surface border border-white/5 p-5 rounded-2xl focus:outline-none focus:border-brand-accent transition-colors" required>
+                        <textarea id="guestMessage" placeholder="Your Message..." rows="4" class="w-full bg-brand-surface border border-white/5 p-5 rounded-2xl focus:outline-none focus:border-brand-accent transition-colors" required></textarea>
+                        <button type="submit" class="w-full bg-brand-accent text-brand-base font-bold py-5 rounded-2xl hover:brightness-110 transition-all shadow-xl active:scale-95">
+                            PUBLISH MESSAGE
+                        </button>
+                    </form>
+                </div>
+
+                <div class="reveal-node">
+                    <h3 class="text-xs uppercase tracking-[0.3em] text-white/30 mb-6">Real-time Congratulatory Feed</h3>
+                    <div id="messageFeed" class="space-y-4 max-h-[500px] overflow-y-auto pr-4">
+                        <!-- Messages generated by JS -->
+                        <div class="bento-card p-6 border-l-4 border-brand-accent">
+                            <p class="text-white/80 italic text-sm mb-4">"A true pioneer in construction economics. FUTA is proud to have you as a Professor. Congratulations!"</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-brand-accent text-xs font-bold">— Vice Chancellor, FUTA</span>
+                                <span class="text-white/20 text-[10px]">2 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="py-12 border-t border-white/5 text-center relative z-10 pb-32">
+        <p class="text-white/20 text-[10px] uppercase tracking-[0.4em]">&copy; 2026 Professor [Name] • Architecting the Future</p>
     </footer>
 
     <script>
-        // --- Countdown ---
-        const targetDate = new Date("June 26, 2026 10:00:00").getTime();
-        function updateCountdown() {
+        // --- 1. Blueprint Canvas Logic ---
+        const canvas = document.getElementById('blueprintCanvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+        const pointCount = 60;
+        let mouse = { x: null, y: null };
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initPoints();
+        }
+
+        function initPoints() {
+            points = [];
+            for (let i = 0; i < pointCount; i++) {
+                points.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5
+                });
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = 'rgba(0, 245, 212, 0.15)';
+            ctx.lineWidth = 0.5;
+
+            points.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                points.slice(i + 1).forEach(p2 => {
+                    let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (dist < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                });
+
+                // Mouse interaction
+                if (mouse.x) {
+                    let mDist = Math.hypot(p.x - mouse.x, p.y - mouse.y);
+                    if (mDist < 200) {
+                        ctx.strokeStyle = `rgba(0, 245, 212, ${1 - mDist/200})`;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                        ctx.strokeStyle = 'rgba(0, 245, 212, 0.15)';
+                    }
+                }
+            });
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', resize);
+        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        resize();
+        draw();
+
+        // --- 2. Advanced Countdown ---
+        const target = new Date("June 26, 2026 10:00:00").getTime();
+        function updateTime() {
             const now = new Date().getTime();
-            const gap = targetDate - now;
-            const second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24;
-            document.getElementById('days').innerText = Math.floor(gap / day).toString().padStart(2, '0');
-            document.getElementById('hours').innerText = Math.floor((gap % day) / hour).toString().padStart(2, '0');
-            document.getElementById('minutes').innerText = Math.floor((gap % hour) / minute).toString().padStart(2, '0');
-            document.getElementById('seconds').innerText = Math.floor((gap % minute) / second).toString().padStart(2, '0');
-        }
-        setInterval(updateCountdown, 1000); updateCountdown();
+            const diff = target - now;
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-        // --- Gallery Lightbox ---
-        function openLightbox(el) {
-            const lb = document.getElementById('lightbox');
-            document.getElementById('lightbox-img').src = el.querySelector('img').src;
-            lb.classList.remove('hidden'); lb.classList.add('flex');
+            document.getElementById('days').innerText = d.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+            document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
+            document.getElementById('seconds').innerText = s.toString().padStart(2, '0');
         }
+        setInterval(updateTime, 1000);
+        updateTime();
 
-        // --- Scroll Reveal ---
+        // --- 3. Scroll Reveal Engine ---
+        const observerOptions = { threshold: 0.1 };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('active');
-                    // Active Nav Link Update
-                    if (window.innerWidth < 768) {
-                        const id = entry.target.getAttribute('id');
-                        document.querySelectorAll('.mobile-menu a').forEach(a => {
-                            a.classList.toggle('active', a.getAttribute('href') === `#${id}`);
-                        });
-                    }
                 }
             });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('section').forEach(sec => observer.observe(sec));
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        }, observerOptions);
 
-        // --- Timeline & Nav Scroll Effect ---
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('main-nav');
-            window.scrollY > 20 ? nav.classList.add('bg-purple-950/90', 'backdrop-blur-md', 'py-4') : nav.classList.remove('bg-purple-950/90', 'backdrop-blur-md', 'py-4');
+        document.querySelectorAll('.reveal-node').forEach(node => observer.observe(node));
 
-            const about = document.getElementById('about');
-            const progress = document.getElementById('timeline-progress');
-            const rect = about.getBoundingClientRect();
-            if (rect.top < window.innerHeight && rect.bottom > 0) {
-                let p = (window.innerHeight - rect.top) / (rect.height + window.innerHeight) * 150;
-                progress.style.height = Math.min(Math.max(p, 0), 100) + '%';
-            }
-        });
-
-        // --- Message Posting ---
-        document.getElementById('message-form').addEventListener('submit', function(e) {
+        // --- 4. Guestbook Interaction ---
+        document.getElementById('guestbookForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const name = document.getElementById('guest-name').value;
-            const msg = document.getElementById('guest-message').value;
-            
+            const name = document.getElementById('guestName').value;
+            const msg = document.getElementById('guestMessage').value;
+
             const card = document.createElement('div');
-            card.className = "glass-card p-5 message-card animate-pulse";
+            card.className = "bento-card p-6 border-l-4 border-brand-accent animate-pulse shadow-[0_0_20px_rgba(0,245,212,0.2)]";
             card.innerHTML = `
-                <p class="text-sm italic opacity-90">"${msg}"</p>
-                <div class="mt-3 flex justify-between items-end">
-                    <span class="text-xs font-bold text-yellow-400">— ${name}</span>
-                    <span class="text-[8px] opacity-40 uppercase">Just Now</span>
+                <p class="text-white/80 italic text-sm mb-4">"${msg}"</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-brand-accent text-xs font-bold">— ${name}</span>
+                    <span class="text-brand-emerald text-[10px] uppercase font-black">Just Now</span>
                 </div>
             `;
-            const container = document.getElementById('messages-container');
-            container.insertBefore(card, container.firstChild);
+
+            const feed = document.getElementById('messageFeed');
+            feed.prepend(card);
             
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.8 }, colors: ['#ffcf40', '#7b2cbf'] });
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.7 },
+                colors: ['#00f5d4', '#d4af37', '#ffffff']
+            });
+
             this.reset();
-            const success = document.getElementById('success-msg');
-            success.classList.remove('hidden');
-            setTimeout(() => { success.classList.add('hidden'); card.classList.remove('animate-pulse'); }, 3000);
+            setTimeout(() => card.classList.remove('animate-pulse'), 2000);
         });
     </script>
 </body>
